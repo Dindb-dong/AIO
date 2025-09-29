@@ -4,6 +4,7 @@ import Navigation from './components/Navigation.jsx';
 import { useI18n } from './i18n.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import Backtesting from './components/Backtesting.jsx';
+import BacktestSettings from './components/BacktestSettings.jsx';
 import StockAnalysis from './components/StockAnalysis.jsx';
 import Comparison from './components/Comparison.jsx';
 import Learning from './components/Learning.jsx';
@@ -52,6 +53,8 @@ function App() {
         return <Dashboard />;
       case 'backtesting':
         return <Backtesting />;
+      case 'backtestsetting':
+        return <BacktestSettings />;
       case 'stock-analysis':
         return <StockAnalysis />;
       case 'comparison':

@@ -71,6 +71,7 @@ function useNavItems(t) {
   return [
     { id: 'dashboard', label: t('nav_dashboard'), icon: '📊' },
     { id: 'backtesting', label: t('nav_backtesting'), icon: '🔬' },
+    { id: 'backtestsetting', label: '백테스팅 설정', icon: '⚙️' },
     { id: 'stock-analysis', label: t('nav_stock'), icon: '📈' },
     { id: 'comparison', label: t('nav_comparison'), icon: '⚖️' },
     { id: 'learning', label: t('nav_learning'), icon: '📚' },

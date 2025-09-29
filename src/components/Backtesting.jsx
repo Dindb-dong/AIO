@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from './common/Button.jsx';
+import TextCoding from './TextCoding.jsx';
+import BacktestResults from './BacktestResults.jsx';
+import HelpModal from './HelpModal.jsx';
 
 const BacktestingContainer = styled.div`
   display: flex;
@@ -171,109 +174,61 @@ def strategy(data):
     return data`;
 
 function Backtesting() {
-  const [selectedStrategy, setSelectedStrategy] = useState(null);
-  const [code, setCode] = useState(defaultCode);
-  const [isRunning, setIsRunning] = useState(false);
-  const [results, setResults] = useState(null);
+  const [currentView, setCurrentView] = useState('text-coding');
+  const [showResults, setShowResults] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
-  const handleRunBacktest = () => {
-    setIsRunning(true);
-    
-    // 시뮬레이션된 백테스팅 실행
-    setTimeout(() => {
-      setResults({
-        totalReturn: "+14.7%",
-        annualReturn: "+16.2%",
-        sharpeRatio: "1.34",
-        maxDrawdown: "-9.8%",
-        winRate: "58.3%",
-        totalTrades: 127
-      });
-      setIsRunning(false);
-    }, 2000);
+  const handleBacktestComplete = () => {
+    setShowResults(true);
   };
+
+  const handleNewBacktest = () => {
+    setShowResults(false);
+    setCurrentView('text-coding');
+  };
+
+  if (showResults) {
+    return <BacktestResults onNewBacktest={handleNewBacktest} />;
+  }
 
   return (
     <BacktestingContainer>
       <Section>
         <SectionTitle>전략 백테스팅</SectionTitle>
         
-        <StrategyBuilder>
-          <div>
-            <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>전략 코드 작성</h3>
-            <CodeEditor
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="백테스팅 전략을 Python으로 작성하세요..."
-            />
-            <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
-              <Button onClick={handleRunBacktest} disabled={isRunning}
-                help
-                helpText="작성한 전략으로 시뮬레이션을 실행합니다."
-                fontSize="16px"
-                padding="12px 24px"
-              >
-                {isRunning ? '실행 중...' : '백테스트 실행'}
-              </Button>
-              <Button background="#95a5a6" fontSize="16px" padding="12px 24px" help helpText="현재 전략 코드를 저장합니다.">전략 저장</Button>
-            </div>
-          </div>
-          
-          <div>
-            <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>저장된 전략</h3>
-            <StrategyList>
-              {sampleStrategies.map(strategy => (
-                <StrategyItem 
-                  key={strategy.id}
-                  onClick={() => setSelectedStrategy(strategy)}
-                  style={{ 
-                    borderColor: selectedStrategy?.id === strategy.id ? '#3498db' : '#e0e0e0',
-                    backgroundColor: selectedStrategy?.id === strategy.id ? '#f8f9fa' : 'white'
-                  }}
-                >
-                  <StrategyName>{strategy.name}</StrategyName>
-                  <StrategyDesc>{strategy.description}</StrategyDesc>
-                  <StrategyMetrics>
-                    <Metric positive>수익률: {strategy.returns}</Metric>
-                    <Metric>샤프비율: {strategy.sharpe}</Metric>
-                    <Metric>최대손실: {strategy.maxDrawdown}</Metric>
-                  </StrategyMetrics>
-                </StrategyItem>
-              ))}
-            </StrategyList>
-          </div>
-        </StrategyBuilder>
+        <div style={{ marginBottom: '20px' }}>
+          <Button 
+            background="#3498db" 
+            onClick={() => setCurrentView('text-coding')}
+            fontSize="16px"
+            padding="12px 24px"
+            help
+            helpText="텍스트 코딩으로 전략을 작성합니다."
+          >
+            텍스트 코딩
+          </Button>
+          <Button 
+            background="#95a5a6" 
+            onClick={() => setCurrentView('block-coding')}
+            fontSize="16px"
+            padding="12px 24px"
+            help
+            helpText="블록 코딩으로 전략을 작성합니다. (준비 중)"
+            style={{ marginLeft: '10px' }}
+          >
+            블록 코딩 (준비 중)
+          </Button>
+        </div>
 
-        {results && (
-          <ResultsSection>
-            <h3 style={{ color: '#2c3e50', marginBottom: '10px' }}>백테스팅 결과</h3>
-            <ResultsGrid>
-              <ResultCard>
-                <ResultValue positive>{results.totalReturn}</ResultValue>
-                <ResultLabel>총 수익률</ResultLabel>
-              </ResultCard>
-              <ResultCard>
-                <ResultValue positive>{results.annualReturn}</ResultValue>
-                <ResultLabel>연간 수익률</ResultLabel>
-              </ResultCard>
-              <ResultCard>
-                <ResultValue positive>{results.sharpeRatio}</ResultValue>
-                <ResultLabel>샤프 비율</ResultLabel>
-              </ResultCard>
-              <ResultCard>
-                <ResultValue>{results.maxDrawdown}</ResultValue>
-                <ResultLabel>최대 손실</ResultLabel>
-              </ResultCard>
-              <ResultCard>
-                <ResultValue positive>{results.winRate}</ResultValue>
-                <ResultLabel>승률</ResultLabel>
-              </ResultCard>
-              <ResultCard>
-                <ResultValue>{results.totalTrades}</ResultValue>
-                <ResultLabel>총 거래 횟수</ResultLabel>
-              </ResultCard>
-            </ResultsGrid>
-          </ResultsSection>
+        {currentView === 'text-coding' && (
+          <TextCoding onBacktestComplete={handleBacktestComplete} />
+        )}
+
+        {currentView === 'block-coding' && (
+          <div style={{ textAlign: 'center', padding: '50px', color: '#7f8c8d' }}>
+            <h3>블록 코딩 기능은 준비 중입니다.</h3>
+            <p>곧 업데이트될 예정입니다.</p>
+          </div>
         )}
       </Section>
     </BacktestingContainer>
